@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +23,16 @@ import java.security.KeyPair;
  */
 public class RSAFragment extends Fragment implements View.OnClickListener {
 
+    private static final String TAG = "RSAFragment";
+
     private TextView tvInfo;
 
     private KeyPair rsaKeyPair;
 
     private static final String SRC_DATA = "你好我叫辛奕你好我叫辛奕你好我叫辛奕你好我叫辛奕你好我叫辛奕你好我叫辛奕你好我叫辛奕你好我叫辛奕你好我叫辛奕你好好好好好";
     private String encryptedData;
+
+    private String sign;
 
 
     @Override
@@ -44,6 +49,13 @@ public class RSAFragment extends Fragment implements View.OnClickListener {
         rootView.findViewById(R.id.btn_rsa_decrypt_use_pri).setOnClickListener(this);
         rootView.findViewById(R.id.btn_rsa_encrypt_use_pri).setOnClickListener(this);
         rootView.findViewById(R.id.btn_rsa_decrypt_use_pub).setOnClickListener(this);
+
+        rootView.findViewById(R.id.btn_rsa_sign_use_pri).setOnClickListener(this);
+        rootView.findViewById(R.id.btn_rsa_verify_use_pub).setOnClickListener(this);
+
+        rootView.findViewById(R.id.btn_rsa_sign_use_pub).setOnClickListener(this);
+        rootView.findViewById(R.id.btn_rsa_verify_use_pri).setOnClickListener(this);
+
         tvInfo = rootView.findViewById(R.id.tv_info);
     }
 
@@ -85,12 +97,34 @@ public class RSAFragment extends Fragment implements View.OnClickListener {
                 buildInfoContent(SRC_DATA, System.currentTimeMillis() - startTime);
                 break;
 
+            // 签名与验签 私钥签名 公钥验签
+            case R.id.btn_rsa_sign_use_pri:
+                sign = RSAUtil.sign(SRC_DATA.getBytes(), rsaKeyPair.getPrivate());
+                Log.wtf(TAG, "签名值=> " + sign);
+                break;
+
+            case R.id.btn_rsa_verify_use_pub:
+                boolean verify = RSAUtil.verify(SRC_DATA.getBytes(), rsaKeyPair.getPublic(), sign);
+                Toast.makeText(getActivity(), "验签结果# " + verify, Toast.LENGTH_SHORT).show();
+                break;
+
+                // 公钥签名 私钥验签
+            case R.id.btn_rsa_sign_use_pub:
+                sign = RSAUtil.sign(SRC_DATA.getBytes(), rsaKeyPair.getPublic());
+                Log.wtf(TAG, "签名值=> " + sign);
+                break;
+
+            case R.id.btn_rsa_verify_use_pri:
+                boolean ver = RSAUtil.verify(SRC_DATA.getBytes(), rsaKeyPair.getPrivate(), sign);
+                Toast.makeText(getActivity(), "验签结果# " + ver, Toast.LENGTH_SHORT).show();
+                break;
+
         }
 
     }
 
     private void buildInfoContent(String srcData, long costTime) {
         byte[] encode = Base64.encode(srcData.getBytes(), Base64.DEFAULT);
-        tvInfo.setText("原文长度= " + encode.length + "\n" + "耗时= " + costTime+" ms");
+        tvInfo.setText("原文长度= " + encode.length + "\n" + "耗时= " + costTime + " ms");
     }
 }

@@ -8,6 +8,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -140,5 +141,45 @@ public class RSAUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    /**
+     * 对数据进行签名
+     *
+     * @param content
+     * @return
+     */
+    // ## 一般都是私钥签名 公钥验签 ##
+    public static String sign(byte[] content, Key key) {
+        try {
+            Signature signature = Signature.getInstance("SHA1WithRSA");
+            signature.initSign((PrivateKey) key);
+            signature.update(Base64.encode(content, BASE64_MODE));
+            byte[] signed = signature.sign();
+            return Base64.encodeToString(signed, BASE64_MODE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 验证数据签名
+     *
+     * @param content
+     * @param signVal
+     * @return
+     */
+    public static boolean verify(byte[] content, Key key, String signVal) {
+        try {
+            Signature signature = Signature.getInstance("SHA1WithRSA");
+            signature.initVerify((PublicKey) key);
+            signature.update(Base64.encode(content, BASE64_MODE));
+            return signature.verify(Base64.decode(signVal, BASE64_MODE));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
