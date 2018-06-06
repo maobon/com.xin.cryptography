@@ -133,32 +133,9 @@
             android:text="RSA 公钥验签" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_rsa_sign_use_pub"
-            style="?android:attr/buttonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RSA 公钥签名" />
-
-        <Button
-            android:id="@+id/btn_rsa_verify_use_pri"
-            style="?android:attr/buttonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="RSA 私钥验签" />
-    </LinearLayout>
-
     <TextView
         android:id="@+id/tv_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp" />
-
 </LinearLayout>

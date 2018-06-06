@@ -13,14 +13,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xin.cryptography.R;
+import com.xin.cryptography.crypto.DSAUtil;
 import com.xin.cryptography.crypto.RSAUtil;
 
 import java.security.KeyPair;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class RSAFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "RSAFragment";
@@ -52,9 +52,6 @@ public class RSAFragment extends Fragment implements View.OnClickListener {
 
         rootView.findViewById(R.id.btn_rsa_sign_use_pri).setOnClickListener(this);
         rootView.findViewById(R.id.btn_rsa_verify_use_pub).setOnClickListener(this);
-
-        rootView.findViewById(R.id.btn_rsa_sign_use_pub).setOnClickListener(this);
-        rootView.findViewById(R.id.btn_rsa_verify_use_pri).setOnClickListener(this);
 
         tvInfo = rootView.findViewById(R.id.tv_info);
     }
@@ -104,21 +101,19 @@ public class RSAFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.btn_rsa_verify_use_pub:
-                boolean verify = RSAUtil.verify(SRC_DATA.getBytes(), rsaKeyPair.getPublic(), sign);
-                Toast.makeText(getActivity(), "验签结果# " + verify, Toast.LENGTH_SHORT).show();
-                break;
+//                boolean verify = RSAUtil.verify(SRC_DATA.getBytes(), rsaKeyPair.getPublic(), sign);
+//                Toast.makeText(getActivity(), "验签结果# " + verify, Toast.LENGTH_SHORT).show();
 
-                // 公钥签名 私钥验签
-            case R.id.btn_rsa_sign_use_pub:
-                sign = RSAUtil.sign(SRC_DATA.getBytes(), rsaKeyPair.getPublic());
-                Log.wtf(TAG, "签名值=> " + sign);
-                break;
+                KeyPair keyPair = DSAUtil.generateKeyPair();
+                if(keyPair == null) return;
+                DSAPublicKey publicKey = (DSAPublicKey) keyPair.getPublic();
+                DSAPrivateKey privateKey = (DSAPrivateKey) keyPair.getPrivate();
 
-            case R.id.btn_rsa_verify_use_pri:
-                boolean ver = RSAUtil.verify(SRC_DATA.getBytes(), rsaKeyPair.getPrivate(), sign);
-                Toast.makeText(getActivity(), "验签结果# " + ver, Toast.LENGTH_SHORT).show();
+                String signVal = DSAUtil.sign(SRC_DATA.getBytes(), privateKey);
+                Log.wtf(TAG, "签名值= " + signVal);
+                boolean verify = DSAUtil.verify(SRC_DATA.getBytes(), publicKey, signVal);
+                Toast.makeText(getActivity(), verify?"验签通过":"验签失败", Toast.LENGTH_SHORT).show();
                 break;
-
         }
 
     }

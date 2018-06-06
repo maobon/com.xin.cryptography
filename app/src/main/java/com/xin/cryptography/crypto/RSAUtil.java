@@ -151,10 +151,10 @@ public class RSAUtil {
      * @return
      */
     // ## 一般都是私钥签名 公钥验签 ##
-    public static String sign(byte[] content, Key key) {
+    public static String sign(byte[] content, PrivateKey privateKey) {
         try {
             Signature signature = Signature.getInstance("SHA1WithRSA");
-            signature.initSign((PrivateKey) key);
+            signature.initSign(privateKey);
             signature.update(Base64.encode(content, BASE64_MODE));
             byte[] signed = signature.sign();
             return Base64.encodeToString(signed, BASE64_MODE);
@@ -171,10 +171,12 @@ public class RSAUtil {
      * @param signVal
      * @return
      */
-    public static boolean verify(byte[] content, Key key, String signVal) {
+
+
+    public static boolean verify(byte[] content, PublicKey publicKey, String signVal) {
         try {
             Signature signature = Signature.getInstance("SHA1WithRSA");
-            signature.initVerify((PublicKey) key);
+            signature.initVerify(publicKey);
             signature.update(Base64.encode(content, BASE64_MODE));
             return signature.verify(Base64.decode(signVal, BASE64_MODE));
         } catch (Exception e) {

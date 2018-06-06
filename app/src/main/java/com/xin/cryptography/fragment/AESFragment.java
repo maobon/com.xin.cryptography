@@ -11,9 +11,6 @@ import android.view.ViewGroup;
 import com.xin.cryptography.R;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class AESFragment extends Fragment {
 
     @Override
