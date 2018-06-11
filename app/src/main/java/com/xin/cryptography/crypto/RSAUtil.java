@@ -171,8 +171,6 @@ public class RSAUtil {
      * @param signVal
      * @return
      */
-
-
     public static boolean verify(byte[] content, PublicKey publicKey, String signVal) {
         try {
             Signature signature = Signature.getInstance("SHA1WithRSA");
